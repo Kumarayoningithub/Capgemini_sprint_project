@@ -6,6 +6,7 @@ import com.capgemini.training.service.GroomingServiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -16,13 +17,10 @@ public class GroomingController {
     private GroomingServiceService service;
 
     @GetMapping
-    public List<GroomingServiceDTO> getAll() {
-        return service.getAll();
-    }
-
-    @GetMapping("/{id}")
-    public GroomingServiceDTO getById(@PathVariable int id) {
-        return service.getById(id);
+    public List<GroomingServiceDTO> getAll(
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice) {
+        return service.getAllFiltered(minPrice, maxPrice);
     }
 
     @GetMapping("/available")
@@ -35,6 +33,11 @@ public class GroomingController {
         return service.getUnavailable();
     }
 
+    @GetMapping("/{id}")
+    public GroomingServiceDTO getById(@PathVariable int id) {
+        return service.getById(id);
+    }
+
     @PostMapping("/add")
     public GroomingServiceDTO add(@RequestBody GroomingServiceDTO dto) {
         return service.add(dto);
@@ -44,16 +47,5 @@ public class GroomingController {
     public GroomingServiceDTO update(@PathVariable int id,
                                     @RequestBody GroomingServiceDTO dto) {
         return service.update(id, dto);
-    }
-
-    @PostMapping("/pets/{petId}/services/{serviceId}")
-    public String assign(@PathVariable int petId, @PathVariable int serviceId) {
-        service.assignService(petId, serviceId);
-        return "Service assigned";
-    }
-
-    @GetMapping("/pets/{petId}/services")
-    public List<GroomingServiceDTO> getServicesByPet(@PathVariable int petId) {
-        return service.getServicesByPet(petId);
     }
 }
