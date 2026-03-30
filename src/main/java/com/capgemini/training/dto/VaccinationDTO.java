@@ -1,10 +1,12 @@
 package com.capgemini.training.dto;
 
+
 public class VaccinationDTO {
 
     private int vaccinationId;
     private String name;
     private String description;
+    private double price;
     private boolean available;
 
     public VaccinationDTO() {}
@@ -31,6 +33,14 @@ public class VaccinationDTO {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 
     public boolean isAvailable() {
