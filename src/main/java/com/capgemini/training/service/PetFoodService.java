@@ -1,10 +1,13 @@
 package com.capgemini.training.service;
 
+import com.capgemini.training.dto.PetFoodDTO;
 import com.capgemini.training.entity.PetFood;
 import com.capgemini.training.repository.PetFoodRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -13,67 +16,98 @@ public class PetFoodService {
     @Autowired
     private PetFoodRepository repo;
 
-   
-    public List<PetFood> getAll() {
-        return repo.findAll();
-    }
-
-   
-    public PetFood getById(int id) {
-        return repo.findById(id).orElse(null);
-    }
-
-   
-    public PetFood add(PetFood food) {
-        return repo.save(food);
-    }
-
   
-    public PetFood update(int id, PetFood updated) {
-        PetFood f = getById(id);
-        if (f != null) {
-            f.setName(updated.getName());
-            f.setBrand(updated.getBrand());
-            f.setType(updated.getType());
-            f.setQuantity(updated.getQuantity());
-            f.setPrice(updated.getPrice());
-            return repo.save(f);
-        }
-        return null;
+    private PetFoodDTO convertToDTO(PetFood f) {
+        PetFoodDTO dto = new PetFoodDTO();
+        dto.setFoodId(f.getFoodId());
+        dto.setName(f.getName());
+        dto.setBrand(f.getBrand());
+        dto.setType(f.getType());
+        dto.setQuantity(f.getQuantity());
+        dto.setPrice(f.getPrice());
+        return dto;
+    }
+
+
+    private PetFood convertToEntity(PetFoodDTO dto) {
+        PetFood f = new PetFood();
+        f.setName(dto.getName());
+        f.setBrand(dto.getBrand());
+        f.setType(dto.getType());
+        f.setQuantity(dto.getQuantity());
+        f.setPrice(dto.getPrice());
+        return f;
+    }
+
+
+    public List<PetFoodDTO> getAllFiltered(BigDecimal minPrice, BigDecimal maxPrice,
+                                           Integer minQuantity, Integer maxQuantity) {
+        return repo.findAll().stream()
+                .filter(f -> minPrice == null || f.getPrice() == null
+                        || f.getPrice().compareTo(minPrice) >= 0)
+                .filter(f -> maxPrice == null || f.getPrice() == null
+                        || f.getPrice().compareTo(maxPrice) <= 0)
+                .filter(f -> minQuantity == null || f.getQuantity() >= minQuantity)
+                .filter(f -> maxQuantity == null || f.getQuantity() <= maxQuantity)
+                .map(this::convertToDTO)
+                .toList();
+    }
+
+
+    public PetFoodDTO getByIdDTO(int id) {
+        PetFood f = repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Food not found"));
+        return convertToDTO(f);
+    }
+
+
+    public PetFoodDTO add(PetFoodDTO dto) {
+        PetFood saved = repo.save(convertToEntity(dto));
+        return convertToDTO(saved);
+    }
+
+
+    public PetFoodDTO update(int id, PetFoodDTO dto) {
+        PetFood f = repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Food not found"));
+
+        f.setName(dto.getName());
+        f.setBrand(dto.getBrand());
+        f.setType(dto.getType());
+        f.setQuantity(dto.getQuantity());
+        f.setPrice(dto.getPrice());
+
+        return convertToDTO(repo.save(f));
     }
 
    
-    public PetFood updateQuantity(int id, int quantity) {
-        PetFood f = getById(id);
-        if (f != null) {
-            f.setQuantity(quantity);
-            return repo.save(f);
-        }
-        return null;
+    public PetFoodDTO updateQuantity(int id, int quantity) {
+        PetFood f = repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Food not found"));
+
+        f.setQuantity(quantity);
+
+        return convertToDTO(repo.save(f));
     }
 
-   
-    public List<PetFood> getByType(String type) {
-        return repo.findByType(type);
+
+    public List<PetFoodDTO> getByTypeDTO(String type) {
+        return repo.findByType(type).stream()
+                .map(this::convertToDTO)
+                .toList();
     }
 
-    
-    public List<PetFood> getByBrand(String brand) {
-        return repo.findByBrand(brand);
+
+    public List<PetFoodDTO> getByBrandDTO(String brand) {
+        return repo.findByBrand(brand).stream()
+                .map(this::convertToDTO)
+                .toList();
     }
 
-    
-    public List<PetFood> searchByName(String name) {
-        return repo.findByNameContainingIgnoreCase(name);
-    }
 
-  
-    public List<PetFood> getLowStock(int quantity) {
-        return repo.findByQuantityLessThanEqual(quantity);
-    }
-
-   
-    public List<PetFood> getByPriceRange(double min, double max) {
-        return repo.findByPriceBetween(min, max);
+    public List<PetFoodDTO> searchByNameDTO(String name) {
+        return repo.findByNameContainingIgnoreCase(name).stream()
+                .map(this::convertToDTO)
+                .toList();
     }
 }
