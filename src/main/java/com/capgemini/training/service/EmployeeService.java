@@ -1,12 +1,14 @@
+
 package com.capgemini.training.service;
 
-import com.capgemini.training.entity.Employee;
-import com.capgemini.training.entity.Pet;
-import com.capgemini.training.repository.EmployeeRepository;
-import com.capgemini.training.repository.PetRepository;
+import com.capgemini.training.dto.EmployeeDTO;
+import com.capgemini.training.entity.*;
+import com.capgemini.training.repository.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -18,66 +20,95 @@ public class EmployeeService {
     @Autowired
     private PetRepository petRepo;
 
-    public List<Employee> getAll() {
-        return repo.findAll();
+    
+    private EmployeeDTO convertToDTO(Employee e) {
+        EmployeeDTO dto = new EmployeeDTO();
+        dto.setEmployeeId(e.getEmployeeId());
+        dto.setFirstName(e.getFirstName());
+        dto.setLastName(e.getLastName());
+        dto.setPosition(e.getPosition());
+        dto.setHireDate(e.getHireDate());
+        dto.setPhoneNumber(e.getPhoneNumber());
+        dto.setEmail(e.getEmail());
+        return dto;
     }
 
-    public Employee getById(int id) {
-        return repo.findById(id).orElse(null);
+  
+    private Employee convertToEntity(EmployeeDTO dto) {
+        Employee e = new Employee();
+        e.setFirstName(dto.getFirstName());
+        e.setLastName(dto.getLastName());
+        e.setPosition(dto.getPosition());
+        e.setHireDate(dto.getHireDate());
+        e.setPhoneNumber(dto.getPhoneNumber());
+        e.setEmail(dto.getEmail());
+        return e;
     }
 
-    public List<Employee> getByName(String name) {
-        return repo.findByFirstNameContainingIgnoreCase(name);
+    public List<EmployeeDTO> getAllFiltered(LocalDate minHireDate, LocalDate maxHireDate) {
+        return repo.findAll().stream()
+                .filter(e -> minHireDate == null || e.getHireDate() == null
+                        || !e.getHireDate().isBefore(minHireDate))
+                .filter(e -> maxHireDate == null || e.getHireDate() == null
+                        || !e.getHireDate().isAfter(maxHireDate))
+                .map(this::convertToDTO)
+                .toList();
     }
 
-    public List<Employee> getByPosition(String position) {
-        return repo.findByPositionIgnoreCase(position);
+    public EmployeeDTO getById(int id) {
+        return convertToDTO(repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Employee not found")));
     }
 
-    public Employee add(Employee emp) {
-        return repo.save(emp);
+    public List<EmployeeDTO> getByName(String name) {
+        return repo.findByFirstNameContainingIgnoreCase(name)
+                .stream().map(this::convertToDTO).toList();
     }
 
-    public Employee update(int id, Employee updated) {
-        Employee e = getById(id);
-        if (e != null) {
-            e.setFirstName(updated.getFirstName());
-            e.setLastName(updated.getLastName());
-            e.setPosition(updated.getPosition());
-            e.setPhoneNumber(updated.getPhoneNumber());
-            e.setEmail(updated.getEmail());
-            return repo.save(e);
+    public List<EmployeeDTO> getByPosition(String position) {
+        return repo.findByPositionIgnoreCase(position)
+                .stream().map(this::convertToDTO).toList();
+    }
+
+    public EmployeeDTO add(EmployeeDTO dto) {
+        return convertToDTO(repo.save(convertToEntity(dto)));
+    }
+
+    public EmployeeDTO update(int id, EmployeeDTO dto) {
+        Employee e = repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
+
+        e.setFirstName(dto.getFirstName());
+        e.setLastName(dto.getLastName());
+        e.setPosition(dto.getPosition());
+        e.setHireDate(dto.getHireDate());
+        e.setPhoneNumber(dto.getPhoneNumber());
+        e.setEmail(dto.getEmail());
+
+        return convertToDTO(repo.save(e));
+    }
+
+    public void assignEmployeeToPet(int petId, int employeeId) {
+        Pet pet = petRepo.findById(petId)
+                .orElseThrow(() -> new RuntimeException("Pet not found"));
+
+        Employee emp = repo.findById(employeeId)
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
+
+        boolean alreadyAssigned = pet.getEmployees().stream()
+                .anyMatch(existing -> existing.getEmployeeId() == employeeId);
+        if (!alreadyAssigned) {
+            pet.getEmployees().add(emp);
         }
-        return null;
+        petRepo.save(pet);
     }
 
-    public Employee assignPet(int empId, int petId) {
-        Employee emp = getById(empId);
-        Pet pet = petRepo.findById(petId).orElse(null);
+    public List<EmployeeDTO> getEmployeesByPet(int petId) {
+        Pet pet = petRepo.findById(petId)
+                .orElseThrow(() -> new RuntimeException("Pet not found"));
 
-        if (emp != null && pet != null) {
-            emp.getPets().add(pet);
-            return repo.save(emp);
-        }
-        return null;
-    }
-
-    public Pet assignEmployeeToPet(int petId, int employeeId) {
-        Pet pet = petRepo.findById(petId).orElse(null);
-        Employee emp = getById(employeeId);
-
-        if (pet != null && emp != null) {
-            pet.getEmployees().add(emp);   
-            return petRepo.save(pet);
-        }
-        return null;
-    }
-
-    public List<Employee> getEmployeesByPet(int petId) {
-        Pet pet = petRepo.findById(petId).orElse(null);
-        if (pet != null) {
-            return pet.getEmployees();
-        }
-        return null;
+        return pet.getEmployees().stream()
+                .map(this::convertToDTO)
+                .toList();
     }
 }
