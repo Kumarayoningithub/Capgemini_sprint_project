@@ -1,6 +1,6 @@
+
 package com.capgemini.training.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.List;
 
@@ -21,32 +21,67 @@ public class Supplier {
     @JoinColumn(name = "address_id")
     private Address address;
 
-    
     @ManyToMany(mappedBy = "suppliers")
-    @JsonIgnore
- 
     private List<Pet> pets;
 
     public Supplier() {}
 
-    public int getSupplierId() { return supplierId; }
-    public void setSupplierId(int supplierId) { this.supplierId = supplierId; }
+	public int getSupplierId() {
+		return supplierId;
+	}
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+	public void setSupplierId(int supplierId) {
+		this.supplierId = supplierId;
+	}
 
-    public String getContactPerson() { return contactPerson; }
-    public void setContactPerson(String contactPerson) { this.contactPerson = contactPerson; }
+	public String getName() {
+		return name;
+	}
 
-    public String getPhoneNumber() { return phoneNumber; }
-    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+	public String getContactPerson() {
+		return contactPerson;
+	}
 
-    public Address getAddress() { return address; }
-    public void setAddress(Address address) { this.address = address; }
+	public void setContactPerson(String contactPerson) {
+		this.contactPerson = contactPerson;
+	}
 
-    public List<Pet> getPets() { return pets; }
-    public void setPets(List<Pet> pets) { this.pets = pets; }
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public Address getAddress() {
+		return address;
+	}
+
+	public void setAddress(Address address) {
+		this.address = address;
+	}
+
+	public List<Pet> getPets() {
+		return pets;
+	}
+
+	public void setPets(List<Pet> pets) {
+		this.pets = pets;
+	}
+
+   
+    
 }
