@@ -1,6 +1,5 @@
 package com.capgemini.training.entity;
 
-
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.util.List;
@@ -23,21 +22,51 @@ public class Vaccination {
 
     public Vaccination() {}
 
-    public int getVaccinationId() { return vaccinationId; }
-    public void setVaccinationId(int vaccinationId) { this.vaccinationId = vaccinationId; }
+    public int getVaccinationId() {
+        return vaccinationId;
+    }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public void setVaccinationId(int vaccinationId) {
+        this.vaccinationId = vaccinationId;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public String getName() {
+        return name;
+    }
 
-    public BigDecimal getPrice() { return price; }
-    public void setPrice(BigDecimal price) { this.price = price; }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public boolean isAvailable() { return available; }
-    public void setAvailable(boolean available) { this.available = available; }
+    public String getDescription() {
+        return description;
+    }
 
-    public List<Pet> getPets() { return pets; }
-    public void setPets(List<Pet> pets) { this.pets = pets; }
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+
+    public List<Pet> getPets() {
+        return pets;
+    }
+
+    public void setPets(List<Pet> pets) {
+        this.pets = pets;
+    }
 }
