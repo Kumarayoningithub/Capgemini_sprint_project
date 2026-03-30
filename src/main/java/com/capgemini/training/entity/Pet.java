@@ -1,7 +1,5 @@
 package com.capgemini.training.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -26,7 +24,6 @@ public class Pet {
     @JoinColumn(name = "category_id")
     private PetCategory category;
 
-    @JsonIgnore
     @ManyToMany
     @JoinTable(
         name = "pet_grooming_relationship",
@@ -35,7 +32,6 @@ public class Pet {
     )
     private List<GroomingService> groomingServices = new ArrayList<>();
 
-    @JsonIgnore
     @ManyToMany
     @JoinTable(
         name = "pet_vaccination_relationship",
@@ -44,7 +40,6 @@ public class Pet {
     )
     private List<Vaccination> vaccinations = new ArrayList<>();
 
-    @JsonIgnore
     @ManyToMany
     @JoinTable(
         name = "pet_food_relationship",
@@ -59,53 +54,117 @@ public class Pet {
         joinColumns = @JoinColumn(name = "pet_id"),
         inverseJoinColumns = @JoinColumn(name = "supplier_id")
     )
-    @JsonIgnoreProperties("pets")   
     private List<Supplier> suppliers = new ArrayList<>();
 
-    @JsonIgnore
     @ManyToMany(mappedBy = "pets")
     private List<Employee> employees = new ArrayList<>();
 
     public Pet() {}
 
+	public int getPetId() {
+		return petId;
+	}
 
+	public void setPetId(int petId) {
+		this.petId = petId;
+	}
 
-    public int getPetId() { return petId; }
-    public void setPetId(int petId) { this.petId = petId; }
+	public String getName() {
+		return name;
+	}
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public String getBreed() { return breed; }
-    public void setBreed(String breed) { this.breed = breed; }
+	public String getBreed() {
+		return breed;
+	}
 
-    public int getAge() { return age; }
-    public void setAge(int age) { this.age = age; }
+	public void setBreed(String breed) {
+		this.breed = breed;
+	}
 
-    public BigDecimal getPrice() { return price; }
-    public void setPrice(BigDecimal price) { this.price = price; }
+	public int getAge() {
+		return age;
+	}
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+	public void setAge(int age) {
+		this.age = age;
+	}
 
-    public String getImageUrl() { return imageUrl; }
-    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+	public BigDecimal getPrice() {
+		return price;
+	}
 
-    public PetCategory getCategory() { return category; }
-    public void setCategory(PetCategory category) { this.category = category; }
+	public void setPrice(BigDecimal price) {
+		this.price = price;
+	}
 
-    public List<GroomingService> getGroomingServices() { return groomingServices; }
-    public void setGroomingServices(List<GroomingService> groomingServices) { this.groomingServices = groomingServices; }
+	public String getDescription() {
+		return description;
+	}
 
-    public List<Vaccination> getVaccinations() { return vaccinations; }
-    public void setVaccinations(List<Vaccination> vaccinations) { this.vaccinations = vaccinations; }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-    public List<PetFood> getFoods() { return foods; }
-    public void setFoods(List<PetFood> foods) { this.foods = foods; }
+	public String getImageUrl() {
+		return imageUrl;
+	}
 
-    public List<Supplier> getSuppliers() { return suppliers; }
-    public void setSuppliers(List<Supplier> suppliers) { this.suppliers = suppliers; }
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
 
-    public List<Employee> getEmployees() { return employees; }
-    public void setEmployees(List<Employee> employees) { this.employees = employees; }
+	public PetCategory getCategory() {
+		return category;
+	}
+
+	public void setCategory(PetCategory category) {
+		this.category = category;
+	}
+
+	public List<GroomingService> getGroomingServices() {
+		return groomingServices;
+	}
+
+	public void setGroomingServices(List<GroomingService> groomingServices) {
+		this.groomingServices = groomingServices;
+	}
+
+	public List<Vaccination> getVaccinations() {
+		return vaccinations;
+	}
+
+	public void setVaccinations(List<Vaccination> vaccinations) {
+		this.vaccinations = vaccinations;
+	}
+
+	public List<PetFood> getFoods() {
+		return foods;
+	}
+
+	public void setFoods(List<PetFood> foods) {
+		this.foods = foods;
+	}
+
+	public List<Supplier> getSuppliers() {
+		return suppliers;
+	}
+
+	public void setSuppliers(List<Supplier> suppliers) {
+		this.suppliers = suppliers;
+	}
+
+	public List<Employee> getEmployees() {
+		return employees;
+	}
+
+	public void setEmployees(List<Employee> employees) {
+		this.employees = employees;
+	}
+
+  
+    
 }

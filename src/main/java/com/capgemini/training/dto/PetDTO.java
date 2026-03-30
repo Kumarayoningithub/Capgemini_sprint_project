@@ -9,7 +9,11 @@ public class PetDTO {
     private String breed;
     private int age;
     private BigDecimal price;
+    private String description;
+    private String imageUrl;
+    private Integer categoryId;
     private String categoryName;
+    private CategoryRef category;
 
     public PetDTO() {}
 
@@ -61,6 +65,47 @@ public class PetDTO {
 		this.categoryName = categoryName;
 	}
 
-  
-    
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public Integer getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public CategoryRef getCategory() {
+        return category;
+    }
+
+    public void setCategory(CategoryRef category) {
+        this.category = category;
+    }
+
+    public static class CategoryRef {
+        private Integer categoryId;
+
+        public Integer getCategoryId() {
+            return categoryId;
+        }
+
+        public void setCategoryId(Integer categoryId) {
+            this.categoryId = categoryId;
+        }
+    }
 }
