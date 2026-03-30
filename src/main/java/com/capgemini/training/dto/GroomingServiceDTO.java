@@ -4,6 +4,7 @@ public class GroomingServiceDTO {
 
     private int serviceId;
     private String name;
+    private String description;
     private double price;
     private boolean available;
 
@@ -23,6 +24,14 @@ public class GroomingServiceDTO {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public double getPrice() {

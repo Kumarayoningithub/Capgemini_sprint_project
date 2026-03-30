@@ -1,9 +1,7 @@
 package com.capgemini.training.service;
 
-
-
+import com.capgemini.training.dto.CategoryDTO;
 import com.capgemini.training.entity.PetCategory;
-
 import com.capgemini.training.repository.PetCategoryRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,24 +15,60 @@ public class CategoryService {
     @Autowired
     private PetCategoryRepository repository;
 
-    public List<PetCategory> getAllCategories() {
-        return repository.findAll();
+  
+    public List<CategoryDTO> getAllCategories() {
+        return repository.findAll()
+                .stream()
+                .map(this::convertToDTO)
+                .toList();
     }
 
-    public PetCategory getById(int id) {
-        return repository.findById(id).orElse(null);
+   
+    public CategoryDTO getById(int id) {
+        PetCategory category = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+
+        return convertToDTO(category);
     }
 
-    public PetCategory add(PetCategory category) {
-        return repository.save(category);
-    }
 
-    public PetCategory update(int id, PetCategory updated) {
-        PetCategory c = getById(id);
-        if (c != null) {
-            c.setName(updated.getName());
-            return repository.save(c);
+    public CategoryDTO getByName(String name) {
+        PetCategory category = repository.findByName(name);
+
+        if (category == null) {
+            throw new RuntimeException("Category not found");
         }
-        return null;
+
+        return convertToDTO(category);
+    }
+
+   
+    public CategoryDTO add(CategoryDTO dto) {
+        PetCategory category = new PetCategory();
+
+        category.setName(dto.getName());
+
+        return convertToDTO(repository.save(category));
+    }
+
+ 
+    public CategoryDTO update(int id, CategoryDTO dto) {
+
+        PetCategory category = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+
+        category.setName(dto.getName());
+
+        return convertToDTO(repository.save(category));
+    }
+
+   
+    private CategoryDTO convertToDTO(PetCategory category) {
+        CategoryDTO dto = new CategoryDTO();
+
+        dto.setCategoryId(category.getCategoryId());
+        dto.setName(category.getName());
+
+        return dto;
     }
 }

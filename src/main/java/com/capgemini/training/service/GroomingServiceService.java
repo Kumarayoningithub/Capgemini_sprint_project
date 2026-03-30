@@ -1,13 +1,14 @@
 package com.capgemini.training.service;
 
-import com.capgemini.training.entity.GroomingService;
-import com.capgemini.training.entity.Pet;
-import com.capgemini.training.repository.GroomingServiceRepository;
-import com.capgemini.training.repository.PetRepository;
+import com.capgemini.training.dto.GroomingServiceDTO;
+import com.capgemini.training.entity.*;
+import com.capgemini.training.repository.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.math.BigDecimal;
 
 @Service
 public class GroomingServiceService {
@@ -18,53 +19,97 @@ public class GroomingServiceService {
     @Autowired
     private PetRepository petRepo;
 
-    public List<GroomingService> getAll() {
-        return repo.findAll();
+   
+    private GroomingServiceDTO convertToDTO(GroomingService s) {
+        GroomingServiceDTO dto = new GroomingServiceDTO();
+
+        dto.setServiceId(s.getServiceId());
+        dto.setName(s.getName());
+        dto.setDescription(s.getDescription());
+        dto.setPrice(s.getPrice() != null ? s.getPrice().doubleValue() : 0);
+        dto.setAvailable(s.isAvailable());
+
+        return dto;
     }
 
-    public GroomingService getById(int id) {
-        return repo.findById(id).orElse(null);
+  
+    private GroomingService convertToEntity(GroomingServiceDTO dto) {
+        GroomingService s = new GroomingService();
+
+        s.setName(dto.getName());
+        s.setDescription(dto.getDescription());
+        s.setPrice(BigDecimal.valueOf(dto.getPrice()));
+        s.setAvailable(dto.isAvailable());
+
+        return s;
     }
 
-    public List<GroomingService> getAvailable() {
-        return repo.findByAvailable(true);
+    public List<GroomingServiceDTO> getAllFiltered(BigDecimal minPrice,
+                                                   BigDecimal maxPrice) {
+        return repo.findAll().stream()
+                .filter(s -> minPrice == null || s.getPrice() == null
+                        || s.getPrice().compareTo(minPrice) >= 0)
+                .filter(s -> maxPrice == null || s.getPrice() == null
+                        || s.getPrice().compareTo(maxPrice) <= 0)
+                .map(this::convertToDTO)
+                .toList();
     }
 
-    public List<GroomingService> getUnavailable() {
-        return repo.findByAvailable(false);
+    public GroomingServiceDTO getById(int id) {
+        return convertToDTO(repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Service not found")));
     }
 
-    public GroomingService add(GroomingService s) {
-        return repo.save(s);
+    public List<GroomingServiceDTO> getAvailable() {
+        return repo.findByAvailable(true).stream()
+                .map(this::convertToDTO).toList();
     }
 
-    public GroomingService update(int id, GroomingService updated) {
-        GroomingService s = repo.findById(id).orElse(null);
-        if (s != null) {
-            s.setName(updated.getName());
-            s.setPrice(updated.getPrice());
-            s.setAvailable(updated.isAvailable());
-            return repo.save(s);
-        }
-        return null;
+    public List<GroomingServiceDTO> getUnavailable() {
+        return repo.findByAvailable(false).stream()
+                .map(this::convertToDTO).toList();
     }
 
-    public Pet assignService(int petId, int serviceId) {
-        Pet pet = petRepo.findById(petId).orElse(null);
-        GroomingService s = repo.findById(serviceId).orElse(null);
+    public GroomingServiceDTO add(GroomingServiceDTO dto) {
+        return convertToDTO(repo.save(convertToEntity(dto)));
+    }
 
-        if (pet != null && s != null) {
+    public GroomingServiceDTO update(int id, GroomingServiceDTO dto) {
+
+        GroomingService s = repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Service not found"));
+
+        s.setName(dto.getName());
+        s.setDescription(dto.getDescription());
+        s.setPrice(BigDecimal.valueOf(dto.getPrice()));
+        s.setAvailable(dto.isAvailable());
+
+        return convertToDTO(repo.save(s));
+    }
+
+    public void assignService(int petId, int serviceId) {
+
+        Pet pet = petRepo.findById(petId)
+                .orElseThrow(() -> new RuntimeException("Pet not found"));
+
+        GroomingService s = repo.findById(serviceId)
+                .orElseThrow(() -> new RuntimeException("Service not found"));
+
+        boolean alreadyAssigned = pet.getGroomingServices().stream()
+                .anyMatch(existing -> existing.getServiceId() == serviceId);
+        if (!alreadyAssigned) {
             pet.getGroomingServices().add(s);
-            return petRepo.save(pet);
         }
-        return null;
+        petRepo.save(pet);
     }
 
-    public List<GroomingService> getServicesByPet(int petId) {
-        Pet pet = petRepo.findById(petId).orElse(null);
-        if (pet != null) {
-            return pet.getGroomingServices();
-        }
-        return null;
+    public List<GroomingServiceDTO> getServicesByPet(int petId) {
+
+        Pet pet = petRepo.findById(petId)
+                .orElseThrow(() -> new RuntimeException("Pet not found"));
+
+        return pet.getGroomingServices().stream()
+                .map(this::convertToDTO)
+                .toList();
     }
 }

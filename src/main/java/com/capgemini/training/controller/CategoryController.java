@@ -15,31 +15,26 @@ public class CategoryController {
     @Autowired
     private CategoryService service;
 
-    
     @GetMapping
     public List<CategoryDTO> getAll() {
         return service.getAllCategories();
     }
 
-   
-    @GetMapping("/{id}")
-    public CategoryDTO getById(@PathVariable int id) {
-        return service.getById(id);
-    }
-
-   
     @GetMapping("/name/{name}")
     public CategoryDTO getByName(@PathVariable String name) {
         return service.getByName(name);
     }
 
- 
+    @GetMapping("/{id}")
+    public CategoryDTO getById(@PathVariable int id) {
+        return service.getById(id);
+    }
+
     @PostMapping("/add")
     public CategoryDTO add(@RequestBody CategoryDTO dto) {
         return service.add(dto);
     }
 
-   
     @PutMapping("/update/{id}")
     public CategoryDTO update(@PathVariable int id, @RequestBody CategoryDTO dto) {
         return service.update(id, dto);
