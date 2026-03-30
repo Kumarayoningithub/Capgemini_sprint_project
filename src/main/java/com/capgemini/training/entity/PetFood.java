@@ -1,6 +1,6 @@
+
 package com.capgemini.training.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.util.List;
@@ -20,29 +20,66 @@ public class PetFood {
     private BigDecimal price;
 
     @ManyToMany(mappedBy = "foods")
-    @JsonIgnore
     private List<Pet> pets;
 
     public PetFood() {}
 
-    public int getFoodId() { return foodId; }
-    public void setFoodId(int foodId) { this.foodId = foodId; }
+	public int getFoodId() {
+		return foodId;
+	}
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+	public void setFoodId(int foodId) {
+		this.foodId = foodId;
+	}
 
-    public String getBrand() { return brand; }
-    public void setBrand(String brand) { this.brand = brand; }
+	public String getName() {
+		return name;
+	}
 
-    public String getType() { return type; }
-    public void setType(String type) { this.type = type; }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public int getQuantity() { return quantity; }
-    public void setQuantity(int quantity) { this.quantity = quantity; }
+	public String getBrand() {
+		return brand;
+	}
 
-    public BigDecimal getPrice() { return price; }
-    public void setPrice(BigDecimal price) { this.price = price; }
+	public void setBrand(String brand) {
+		this.brand = brand;
+	}
 
-    public List<Pet> getPets() { return pets; }
-    public void setPets(List<Pet> pets) { this.pets = pets; }
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public int getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
+	}
+
+	public BigDecimal getPrice() {
+		return price;
+	}
+
+	public void setPrice(BigDecimal price) {
+		this.price = price;
+	}
+
+	public List<Pet> getPets() {
+		return pets;
+	}
+
+	public void setPets(List<Pet> pets) {
+		this.pets = pets;
+	}
+
+    
+    
 }
