@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface GroomingServiceRepository extends JpaRepository<GroomingService, Integer> {
 
+  
     List<GroomingService> findByAvailable(boolean available);
 }
