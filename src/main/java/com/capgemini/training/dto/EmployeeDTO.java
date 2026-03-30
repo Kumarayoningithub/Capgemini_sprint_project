@@ -1,11 +1,16 @@
 package com.capgemini.training.dto;
 
+import java.time.LocalDate;
+
 public class EmployeeDTO {
 
     private int employeeId;
     private String firstName;
     private String lastName;
     private String position;
+    private LocalDate hireDate;
+    private String phoneNumber;
+    private String email;
 
     public EmployeeDTO() {}
 
@@ -40,5 +45,28 @@ public class EmployeeDTO {
 	public void setPosition(String position) {
 		this.position = position;
 	}
-    
+
+    public LocalDate getHireDate() {
+        return hireDate;
+    }
+
+    public void setHireDate(LocalDate hireDate) {
+        this.hireDate = hireDate;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }
