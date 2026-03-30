@@ -1,5 +1,4 @@
 package com.capgemini.training.controller;
-
 import com.capgemini.training.entity.Address;
 import com.capgemini.training.service.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/addresses")
+@RequestMapping("/address")
 public class AddressController {
 
     @Autowired
