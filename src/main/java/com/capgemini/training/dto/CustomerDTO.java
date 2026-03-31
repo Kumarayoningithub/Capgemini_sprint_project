@@ -1,7 +1,5 @@
 package com.capgemini.training.dto;
 
-import com.capgemini.training.dto.CustomerDTO.AddressRef;
-
 public class CustomerDTO {
 
     private int customerId;
