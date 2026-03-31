@@ -126,9 +126,7 @@ public class SupplierService {
 
     private Address resolveAddress(SupplierDTO dto) {
         Integer addressId = dto.getAddressId();
-        if (addressId == null && dto.getAddress() != null) {
-            addressId = dto.getAddress().getAddressId();
-        }
+
         if (addressId == null) {
             return null;
         }
