@@ -1,9 +1,11 @@
 package com.capgemini.training.entity;
 
 
+
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.ArrayList;
 
 @Entity
 @Table(name = "employees")
@@ -30,7 +32,8 @@ public class Employee {
         joinColumns = @JoinColumn(name = "employee_id"),
         inverseJoinColumns = @JoinColumn(name = "pet_id")
     )
-    private List<Pet> pets;
+
+    private List<Pet>pets=new ArrayList<>();
 
     public Employee() {}
 
