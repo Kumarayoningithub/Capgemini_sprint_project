@@ -1,9 +1,10 @@
-
 package com.capgemini.training.service;
 
 import com.capgemini.training.dto.EmployeeDTO;
 import com.capgemini.training.entity.*;
 import com.capgemini.training.repository.*;
+
+import org.springframework.transaction.annotation.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -87,6 +88,7 @@ public class EmployeeService {
 
         return convertToDTO(repo.save(e));
     }
+    @Transactional
 
     public void assignEmployeeToPet(int petId, int employeeId) {
         Pet pet = petRepo.findById(petId)
@@ -94,14 +96,17 @@ public class EmployeeService {
 
         Employee emp = repo.findById(employeeId)
                 .orElseThrow(() -> new RuntimeException("Employee not found"));
-
-        boolean alreadyAssigned = pet.getEmployees().stream()
-                .anyMatch(existing -> existing.getEmployeeId() == employeeId);
-        if (!alreadyAssigned) {
-            pet.getEmployees().add(emp);
+        emp.getPets().size();
+        boolean alreadyAssigned=emp.getPets().stream().anyMatch(p ->p.getPetId()==petId);
+        if(!alreadyAssigned) {
+        	
+        	emp.getPets().add(pet);
+        	pet.getEmployees().add(emp);   
+        	repo.save(emp);
         }
-        petRepo.save(pet);
-    }
+        
+        }
+      
 
     public List<EmployeeDTO> getEmployeesByPet(int petId) {
         Pet pet = petRepo.findById(petId)
