@@ -8,4 +8,5 @@ import java.util.List;
 public interface TransactionRepository extends JpaRepository<Transaction, Integer> {
 
     List<Transaction> findByCustomerCustomerId(int customerId);
+    List<Transaction> findByPetPetId(int petId);
 }

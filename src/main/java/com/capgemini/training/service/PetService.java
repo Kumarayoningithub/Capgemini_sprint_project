@@ -131,9 +131,8 @@ public class PetService {
 
     public List<TransactionDTO> getTransactionHistory(int petId) {
 
-        return transactionRepository.findAll()
+        return transactionRepository.findByPetPetId(petId)
                 .stream()
-                .filter(t -> t.getPet().getPetId() == petId)
                 .map(this::convertTransactionToDTO)
                 .toList();
     }
@@ -219,7 +218,20 @@ public class PetService {
         dto.setTransactionId(t.getTransactionId());
         dto.setAmount(t.getAmount());
         dto.setStatus(t.getTransactionStatus().name());
-        dto.setTransactionDate(t.getTransactionDate().toString());
+
+        if (t.getTransactionDate() != null) {
+            dto.setTransactionDate(t.getTransactionDate().toString());
+        }
+
+        if (t.getPet() != null) {
+            dto.setPetId(t.getPet().getPetId());
+            dto.setPetName(t.getPet().getName());
+        }
+
+        if (t.getCustomer() != null) {
+            dto.setCustomerId(t.getCustomer().getCustomerId());
+            dto.setCustomerName(t.getCustomer().getName());
+        }
 
         return dto;
     }

@@ -8,6 +8,7 @@ import com.capgemini.training.service.EmployeeService;
 import com.capgemini.training.service.GroomingServiceService;
 import com.capgemini.training.service.PetService;
 import com.capgemini.training.service.VaccinationService;
+import com.capgemini.training.dto.TransactionDTO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -71,5 +72,9 @@ public class PetRelationController {
     @GetMapping("/{petId}/employees")
     public List<EmployeeDTO> getEmployeesByPet(@PathVariable int petId) {
         return employeeService.getEmployeesByPet(petId);
+    }
+    @GetMapping("/{petId}/transactions")
+    public List<TransactionDTO> getTransactionsByPet(@PathVariable int petId) {
+        return petService.getTransactionHistory(petId);
     }
 }
