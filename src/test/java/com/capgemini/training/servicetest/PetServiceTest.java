@@ -2,7 +2,7 @@ package com.capgemini.training.servicetest;
 
 import com.capgemini.training.dto.PetDTO;
 import com.capgemini.training.dto.PetFoodDTO;
-import com.capgemini.training.dto.PetSupplierDTO;
+import com.capgemini.training.dto.SupplierDTO;
 import com.capgemini.training.dto.TransactionDTO;
 import com.capgemini.training.entity.*;
 import com.capgemini.training.repository.*;
@@ -426,7 +426,7 @@ class PetServiceTest {
         pet1.getSuppliers().add(supplier1);
         when(petRepository.findById(1)).thenReturn(Optional.of(pet1));
 
-        List<PetSupplierDTO> result = service.getSuppliersDTO(1);
+        List<SupplierDTO> result = service.getSuppliersDTO(1);
 
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getName()).isEqualTo("Pet World Supplier");
@@ -440,7 +440,7 @@ class PetServiceTest {
     void getSuppliersDTO_petWithNoSuppliers_returnsEmpty() {
         when(petRepository.findById(1)).thenReturn(Optional.of(pet1));
 
-        List<PetSupplierDTO> result = service.getSuppliersDTO(1);
+        List<SupplierDTO> result = service.getSuppliersDTO(1);
 
         assertThat(result).isEmpty();
     }
@@ -456,7 +456,7 @@ class PetServiceTest {
         pet1.getSuppliers().add(supplierNoAddr);
         when(petRepository.findById(1)).thenReturn(Optional.of(pet1));
 
-        List<PetSupplierDTO> result = service.getSuppliersDTO(1);
+        List<SupplierDTO> result = service.getSuppliersDTO(1);
 
         assertThat(result.get(0).getCity()).isNull();
         assertThat(result.get(0).getState()).isNull();
