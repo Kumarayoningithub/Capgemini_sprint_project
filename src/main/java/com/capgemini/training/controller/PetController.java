@@ -58,4 +58,14 @@ public class PetController {
     public List<TransactionDTO> getTransactions(@PathVariable int petId) {
         return service.getTransactionHistory(petId);
     }
+    
+    @PostMapping("/{petId}/foods/{foodId}")
+    public PetDTO linkPetToFood(@PathVariable int petId, @PathVariable int foodId) {
+        return service.assignFood(petId, foodId);
+    }
+
+    @PostMapping("/{petId}/suppliers/{supplierId}")
+    public PetDTO linkPetToSupplier(@PathVariable int petId, @PathVariable int supplierId) {
+        return service.assignSupplier(petId, supplierId);
+    }
 }
