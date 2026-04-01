@@ -1,11 +1,9 @@
+
 package com.capgemini.training.servicetest;
 
-import com.capgemini.training.dto.EmployeeDTO;
 import com.capgemini.training.dto.VaccinationDTO;
-import com.capgemini.training.entity.Employee;
 import com.capgemini.training.entity.Pet;
 import com.capgemini.training.entity.Vaccination;
-import com.capgemini.training.repository.EmployeeRepository;
 import com.capgemini.training.repository.PetRepository;
 import com.capgemini.training.repository.VaccinationRepository;
 import com.capgemini.training.service.VaccinationService;
@@ -19,7 +17,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -38,15 +35,11 @@ class VaccinationServiceTest {
     @Mock
     private PetRepository petRepo;
 
-    @Mock
-    private EmployeeRepository employeeRepo;
-
     @InjectMocks
     private VaccinationService service;
 
     private Vaccination vacc1;
     private Vaccination vacc2;
-    private Employee emp1;
 
     @BeforeEach
     void setUp() {
@@ -56,7 +49,6 @@ class VaccinationServiceTest {
         vacc1.setDescription("Prevents canine parvovirus");
         vacc1.setPrice(new BigDecimal("2500.00"));
         vacc1.setAvailable(true);
-        vacc1.setEmployees(new ArrayList<>());
 
         vacc2 = new Vaccination();
         vacc2.setVaccinationId(2);
@@ -64,16 +56,6 @@ class VaccinationServiceTest {
         vacc2.setDescription("Protects against feline distemper");
         vacc2.setPrice(new BigDecimal("1800.00"));
         vacc2.setAvailable(false);
-        vacc2.setEmployees(new ArrayList<>());
-
-        emp1 = new Employee();
-        emp1.setEmployeeId(1);
-        emp1.setFirstName("John");
-        emp1.setLastName("Smith");
-        emp1.setPosition("Veterinarian");
-        emp1.setHireDate(LocalDate.of(2022, 1, 1));
-        emp1.setPhoneNumber("555-1234");
-        emp1.setEmail("john@example.com");
     }
 
 
@@ -327,65 +309,5 @@ class VaccinationServiceTest {
         assertThatThrownBy(() -> service.getVaccinationsByPet(99))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("Pet not found");
-    }
-
-
-    @Test
-    @DisplayName("assignEmployee - both exist - assigns employee to vaccination")
-    void assignEmployee_bothExist_assignsCorrectly() {
-        when(repo.findById(1)).thenReturn(Optional.of(vacc1));
-        when(employeeRepo.findById(1)).thenReturn(Optional.of(emp1));
-
-        service.assignEmployee(1, 1);
-
-        assertThat(vacc1.getEmployees()).hasSize(1);
-        assertThat(vacc1.getEmployees().get(0).getEmployeeId()).isEqualTo(1);
-        verify(repo).save(vacc1);
-    }
-
-    @Test
-    @DisplayName("assignEmployee - vaccination not found - throws RuntimeException")
-    void assignEmployee_vaccinationNotFound_throwsException() {
-        when(repo.findById(99)).thenReturn(Optional.empty());
-
-        assertThatThrownBy(() -> service.assignEmployee(99, 1))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessage("Vaccination not found");
-    }
-
-    @Test
-    @DisplayName("assignEmployee - employee not found - throws RuntimeException")
-    void assignEmployee_employeeNotFound_throwsException() {
-        when(repo.findById(1)).thenReturn(Optional.of(vacc1));
-        when(employeeRepo.findById(99)).thenReturn(Optional.empty());
-
-        assertThatThrownBy(() -> service.assignEmployee(1, 99))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessage("Employee not found");
-    }
-
-
-    @Test
-    @DisplayName("getEmployeesByVaccination - vaccination exists - returns employee DTOs")
-    void getEmployeesByVaccination_exists_returnsEmployeeDTOs() {
-        vacc1.getEmployees().add(emp1);
-
-        when(repo.findById(1)).thenReturn(Optional.of(vacc1));
-
-        List<EmployeeDTO> result = service.getEmployeesByVaccination(1);
-
-        assertThat(result).hasSize(1);
-        assertThat(result.get(0).getFirstName()).isEqualTo("John");
-        assertThat(result.get(0).getPosition()).isEqualTo("Veterinarian");
-    }
-
-    @Test
-    @DisplayName("getEmployeesByVaccination - vaccination not found - throws RuntimeException")
-    void getEmployeesByVaccination_notFound_throwsException() {
-        when(repo.findById(99)).thenReturn(Optional.empty());
-
-        assertThatThrownBy(() -> service.getEmployeesByVaccination(99))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessage("Vaccination not found");
     }
 }
