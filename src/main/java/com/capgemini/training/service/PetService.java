@@ -230,7 +230,7 @@ public class PetService {
 
         if (t.getCustomer() != null) {
             dto.setCustomerId(t.getCustomer().getCustomerId());
-            dto.setCustomerName(t.getCustomer().getName());
+            dto.setCustomerName(t.getCustomer().getFirstName() + " " + t.getCustomer().getLastName());
         }
 
         return dto;

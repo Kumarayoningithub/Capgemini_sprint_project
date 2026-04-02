@@ -54,10 +54,6 @@ public class PetController {
         return service.getSuppliersDTO(petId);
     }
 
-    @GetMapping("/transaction_history/{petId}")
-    public List<TransactionDTO> getTransactions(@PathVariable int petId) {
-        return service.getTransactionHistory(petId);
-    }
     
 
 }
