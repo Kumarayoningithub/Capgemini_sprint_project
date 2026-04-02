@@ -286,4 +286,50 @@ class SupplierServiceTest {
 
         assertThat(result).isEmpty();
     }
+    
+    @Test
+    @DisplayName("getByStreetDTO - street exists - returns suppliers on that street")
+    void getByStreetDTO_streetExists_returnsMatchingSuppliers() {
+        when(repo.findByAddress_StreetIgnoreCase("123 Park Street"))
+                .thenReturn(List.of(supplier1));
+
+        List<SupplierDTO> result = service.getByStreetDTO("123 Park Street");
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getStreet()).isEqualTo("123 Park Street");
+    }
+    
+    @Test
+    @DisplayName("getByZipcodeDTO - zipcode exists - returns suppliers with that zipcode")
+    void getByZipcodeDTO_zipcodeExists_returnsMatchingSuppliers() {
+        when(repo.findByAddress_ZipCodeIgnoreCase("700001"))
+                .thenReturn(List.of(supplier1));
+
+        List<SupplierDTO> result = service.getByZipcodeDTO("700001");
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getZipcode()).isEqualTo("700001");
+    }
+    
+    @Test
+    @DisplayName("getByStreetDTO - no match - returns empty list")
+    void getByStreetDTO_noMatch_returnsEmpty() {
+        when(repo.findByAddress_StreetIgnoreCase("Unknown Street"))
+                .thenReturn(Collections.emptyList());
+
+        List<SupplierDTO> result = service.getByStreetDTO("Unknown Street");
+
+        assertThat(result).isEmpty();
+    }
+    
+    @Test
+    @DisplayName("getByZipcodeDTO - no match - returns empty list")
+    void getByZipcodeDTO_noMatch_returnsEmpty() {
+        when(repo.findByAddress_ZipCodeIgnoreCase("999999"))
+                .thenReturn(Collections.emptyList());
+
+        List<SupplierDTO> result = service.getByZipcodeDTO("999999");
+
+        assertThat(result).isEmpty();
+    }
 }
