@@ -62,10 +62,8 @@ class SupplierServiceTest {
         supplier2.setContactPerson("Neha Verma");
         supplier2.setPhoneNumber("9123456789");
         supplier2.setEmail("delhi@example.com");
-        supplier2.setAddress(null);
+        supplier2.setAddress(address);
     }
-
-  
 
     @Test
     @DisplayName("getAllDTO - returns all suppliers as DTOs")
@@ -103,19 +101,6 @@ class SupplierServiceTest {
     }
 
     @Test
-    @DisplayName("getAllDTO - supplier without address - city and state are null")
-    void getAllDTO_supplierWithoutAddress_cityAndStateNull() {
-        when(repo.findAll()).thenReturn(List.of(supplier2));
-
-        List<SupplierDTO> result = service.getAllDTO();
-
-        assertThat(result.get(0).getCity()).isNull();
-        assertThat(result.get(0).getState()).isNull();
-    }
-
-
-
-    @Test
     @DisplayName("getByIdDTO - found - returns correct DTO")
     void getByIdDTO_found_returnsCorrectDTO() {
         when(repo.findById(1)).thenReturn(Optional.of(supplier1));
@@ -140,7 +125,6 @@ class SupplierServiceTest {
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("Supplier not found");
     }
-
 
     @Test
     @DisplayName("add - valid DTO with address - saves and returns DTO")
@@ -172,25 +156,14 @@ class SupplierServiceTest {
     }
 
     @Test
-    @DisplayName("add - valid DTO without address - saves with null address")
-    void add_validDTOWithoutAddress_savesWithNullAddress() {
-        SupplierDTO inputDTO = new SupplierDTO();
-        inputDTO.setName("Simple Supplier");
-        inputDTO.setContactPerson("Test Person");
-        inputDTO.setPhoneNumber("1234567890");
-        inputDTO.setEmail("test@test.com");
+    @DisplayName("add - null address id - throws exception")
+    void add_nullAddressId_throwsException() {
+        SupplierDTO dto = new SupplierDTO();
+        dto.setName("Test Supplier");
+        dto.setAddressId(null);
 
-        Supplier savedEntity = new Supplier();
-        savedEntity.setSupplierId(4);
-        savedEntity.setName("Simple Supplier");
-        savedEntity.setAddress(null);
-
-        when(repo.save(any(Supplier.class))).thenReturn(savedEntity);
-
-        SupplierDTO result = service.add(inputDTO);
-
-        assertThat(result.getName()).isEqualTo("Simple Supplier");
-        assertThat(result.getCity()).isNull();
+        assertThatThrownBy(() -> service.add(dto))
+                .isInstanceOf(RuntimeException.class);
     }
 
     @Test
@@ -206,8 +179,6 @@ class SupplierServiceTest {
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("Address not found");
     }
-
-  
 
     @Test
     @DisplayName("update - found - updates all fields and returns updated DTO")
@@ -253,8 +224,6 @@ class SupplierServiceTest {
                 .hasMessage("Supplier not found");
     }
 
-  
-
     @Test
     @DisplayName("getByNameDTO - match found - returns matching suppliers")
     void getByNameDTO_matchFound_returnsMatchingSuppliers() {
@@ -276,8 +245,6 @@ class SupplierServiceTest {
         assertThat(result).isEmpty();
     }
 
-  
-
     @Test
     @DisplayName("getByCityDTO - city exists - returns suppliers in that city")
     void getByCityDTO_cityExists_returnsMatchingSuppliers() {
@@ -298,8 +265,6 @@ class SupplierServiceTest {
 
         assertThat(result).isEmpty();
     }
-
-   
 
     @Test
     @DisplayName("getByStateDTO - state exists - returns suppliers in that state")

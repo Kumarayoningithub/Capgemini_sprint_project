@@ -128,7 +128,7 @@ public class SupplierService {
         Integer addressId = dto.getAddressId();
 
         if (addressId == null) {
-            return null;
+            throw new RuntimeException("Address ID is required");
         }
         return addressRepository.findById(addressId)
                 .orElseThrow(() -> new RuntimeException("Address not found"));
