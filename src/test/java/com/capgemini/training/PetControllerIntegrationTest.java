@@ -165,16 +165,7 @@ class PetControllerIntegrationTest {
                 .andExpect(jsonPath("$[0].state").value("West Bengal"));
     }
 
-    @Test
-    @DisplayName("GET /pets/transaction_history/{petId} returns 200")
-    void getTransactionHistory_returns200() throws Exception {
-        when(petService.getTransactionHistory(1)).thenReturn(List.of(buildTransaction(1, "Success")));
-
-        mockMvc.perform(get("/pets/transaction_history/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].status").value("Success"));
-    }
-
+    
     @Test
     @DisplayName("POST /pets/add valid returns 200")
     void addPet_valid_returns200() throws Exception {

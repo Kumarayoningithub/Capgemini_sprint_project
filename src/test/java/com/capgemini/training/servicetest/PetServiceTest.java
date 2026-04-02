@@ -476,7 +476,7 @@ class PetServiceTest {
     @Test
     @DisplayName("getTransactionHistory - pet has transactions - returns transaction DTOs")
     void getTransactionHistory_petHasTransactions_returnsTransactionDTOs() {
-        when(transactionRepository.findAll()).thenReturn(List.of(txSuccess, txFailed));
+        when(transactionRepository.findByPetPetId(1)).thenReturn(List.of(txSuccess, txFailed));
 
         List<TransactionDTO> result = service.getTransactionHistory(1);
 
@@ -484,13 +484,15 @@ class PetServiceTest {
         assertThat(result.get(0).getStatus()).isEqualTo("Success");
         assertThat(result.get(0).getAmount()).isEqualByComparingTo("25000.00");
         assertThat(result.get(0).getTransactionDate()).isEqualTo("2024-01-15");
+        assertThat(result.get(0).getCustomerName()).isEqualTo("Alice Johnson"); 
+        assertThat(result.get(0).getPetName()).isEqualTo("Bella");              
         assertThat(result.get(1).getStatus()).isEqualTo("Failed");
     }
 
     @Test
     @DisplayName("getTransactionHistory - pet has no transactions - returns empty list")
     void getTransactionHistory_petHasNoTransactions_returnsEmpty() {
-        when(transactionRepository.findAll()).thenReturn(Collections.emptyList());
+        when(transactionRepository.findByPetPetId(1)).thenReturn(Collections.emptyList());
 
         List<TransactionDTO> result = service.getTransactionHistory(1);
 
@@ -498,25 +500,14 @@ class PetServiceTest {
     }
 
     @Test
-    @DisplayName("getTransactionHistory - filters transactions by petId correctly")
-    void getTransactionHistory_filtersCorrectlyByPetId() {
-        Pet anotherPet = new Pet();
-        anotherPet.setPetId(99);
+    @DisplayName("getTransactionHistory - delegates to repository with correct petId")
+    void getTransactionHistory_callsRepositoryWithCorrectPetId() {
+        when(transactionRepository.findByPetPetId(5)).thenReturn(Collections.emptyList());
 
-        Transaction txOther = new Transaction();
-        txOther.setTransactionId(3);
-        txOther.setAmount(new BigDecimal("5000.00"));
-        txOther.setTransactionDate(LocalDate.of(2024, 5, 1));
-        txOther.setTransactionStatus(TransactionStatus.Success);
-        txOther.setCustomer(customer);
-        txOther.setPet(anotherPet);
+        service.getTransactionHistory(5);
 
-        when(transactionRepository.findAll()).thenReturn(List.of(txSuccess, txOther));
-
-        List<TransactionDTO> result = service.getTransactionHistory(1);
-
-        assertThat(result).hasSize(1);
-        assertThat(result.get(0).getTransactionId()).isEqualTo(1);
+        verify(transactionRepository).findByPetPetId(5);
+        verify(transactionRepository, never()).findAll(); 
     }
 
 
